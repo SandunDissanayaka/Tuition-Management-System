@@ -1,0 +1,63 @@
+<Window x:Class="TuitionManagementSystem.Views.RegisterWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Jayagath Institute - Register" Height="700" Width="900"
+        TextOptions.TextFormattingMode="Display"
+        TextOptions.TextRenderingMode="ClearType"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource PageBackground}">
+    <Grid>
+        <!-- Height is NOT fixed here - the card grows to fit its content so nothing
+             (like the "Back to Login" link at the bottom) ever gets clipped. -->
+        <Border Width="420" MaxHeight="650" Background="White" CornerRadius="14"
+                HorizontalAlignment="Center" VerticalAlignment="Center"
+                BorderBrush="{StaticResource BorderGray}" BorderThickness="1">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="25" ShadowDepth="4" Opacity="0.12" Color="Black"/>
+            </Border.Effect>
+
+            <!-- ScrollViewer is a safety net on smaller screens/resolutions -->
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="30,26,30,26">
+
+                    <Border Width="52" Height="52" Background="#DCFCE7" CornerRadius="12" HorizontalAlignment="Center">
+                        <TextBlock Text="&#128100;" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+
+                    <TextBlock Text="Create an Account" FontSize="20" FontWeight="Bold"
+                               HorizontalAlignment="Center" Margin="0,14,0,2" Foreground="{StaticResource TextDark}"/>
+                    <TextBlock Text="Register to access Jayagath Institute system" FontSize="12"
+                               HorizontalAlignment="Center" Foreground="{StaticResource TextMuted}" Margin="0,0,0,20"/>
+
+                    <TextBlock Text="Full Name" Style="{StaticResource FieldLabel}"/>
+                    <TextBox Style="{StaticResource InputBox}" Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,14"/>
+
+                    <TextBlock Text="Username" Style="{StaticResource FieldLabel}"/>
+                    <TextBox Style="{StaticResource InputBox}" Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,14"/>
+
+                    <TextBlock Text="Password" Style="{StaticResource FieldLabel}"/>
+                    <PasswordBox x:Name="PasswordBox" Style="{StaticResource InputPasswordBox}" Margin="0,0,0,14"/>
+
+                    <TextBlock Text="Confirm Password" Style="{StaticResource FieldLabel}"/>
+                    <PasswordBox x:Name="ConfirmPasswordBox" Style="{StaticResource InputPasswordBox}" Margin="0,0,0,8"/>
+
+                    <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerRed}"
+                               FontSize="12.5" TextWrapping="Wrap" Margin="0,4,0,4"/>
+                    <TextBlock Text="{Binding SuccessMessage}" Foreground="{StaticResource SuccessGreen}"
+                               FontSize="12.5" TextWrapping="Wrap" Margin="0,0,0,4" FontWeight="SemiBold"/>
+
+                    <Button Content="Register" Style="{StaticResource SuccessButton}" Command="{Binding RegisterCommand}" Margin="0,10,0,0"/>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,18,0,4">
+                        <TextBlock Text="Already have an account?" FontSize="13" Foreground="{StaticResource TextMuted}"/>
+                        <Button Content="Back to Login" Margin="6,0,0,0" Padding="0"
+                                Background="Transparent" BorderThickness="0" Cursor="Hand"
+                                Foreground="{StaticResource PrimaryBlue}" FontWeight="SemiBold" FontSize="13"
+                                Command="{Binding BackToLoginCommand}"/>
+                    </StackPanel>
+
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</Window>
