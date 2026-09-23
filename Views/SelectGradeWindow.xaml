@@ -1,0 +1,84 @@
+<Window x:Class="TuitionManagementSystem.Views.SelectGradeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Jayagath Institute - Select Class" Height="600" Width="1000"
+        TextOptions.TextFormattingMode="Display"
+        TextOptions.TextRenderingMode="ClearType"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource PageBackground}">
+    <DockPanel>
+        <!-- Top bar -->
+        <Border DockPanel.Dock="Top" Background="White" BorderBrush="{StaticResource BorderGray}" BorderThickness="0,0,0,1" Padding="24,14">
+            <Grid>
+                <StackPanel Orientation="Horizontal">
+                    <Border Width="34" Height="34" Background="#E0E7FF" CornerRadius="8">
+                        <TextBlock Text="&#127891;" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Margin="10,0,0,0">
+                        <TextBlock Text="Jayagath Institute" FontWeight="Bold" FontSize="14"/>
+                        <TextBlock Text="Tuition Class Management System" FontSize="10.5" Foreground="{StaticResource TextMuted}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Border Width="30" Height="30" Background="{StaticResource PrimaryBlue}" CornerRadius="15" VerticalAlignment="Center">
+                        <TextBlock Text="A" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Margin="8,0,20,0" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding AdminName}" FontSize="12" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding AdminRole}" FontSize="10" Foreground="{StaticResource TextMuted}"/>
+                    </StackPanel>
+                    <Button Content="Logout" Style="{StaticResource OutlineButton}" Command="{Binding LogoutCommand}" Foreground="{StaticResource DangerRed}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Body -->
+        <Grid>
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="700">
+                <TextBlock Text="Select Your Class Dashboard" Style="{StaticResource PageTitle}"
+                           HorizontalAlignment="Center" FontSize="24"/>
+                <TextBlock Text="Choose the target grade environment to manage sessions, attendance, and student payments."
+                           Style="{StaticResource PageSubtitle}" HorizontalAlignment="Center" Margin="0,4,0,26"/>
+
+                <UniformGrid Columns="2" Rows="1">
+                    <!-- Grade 10 card -->
+                    <Border Style="{StaticResource Card}" Margin="0,0,10,0">
+                        <StackPanel>
+                            <Grid>
+                                <Border Width="38" Height="38" Background="#DBEAFE" CornerRadius="8" HorizontalAlignment="Left">
+                                    <TextBlock Text="&#128202;" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <Border Background="#DBEAFE" CornerRadius="10" Padding="8,3" HorizontalAlignment="Right" VerticalAlignment="Top">
+                                    <TextBlock Text="{Binding Grade10Count, StringFormat='{}{0} Enrolled'}" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource PrimaryBlue}"/>
+                                </Border>
+                            </Grid>
+                            <TextBlock Text="Grade 10 Mathematics" FontWeight="Bold" FontSize="15" Margin="0,14,0,4"/>
+                            <TextBlock Text="Manage curriculum modules, track regular session sheets, process monthly collections and handle student profiles."
+                                       TextWrapping="Wrap" FontSize="11.5" Foreground="{StaticResource TextMuted}" Margin="0,0,0,16"/>
+                            <Button Content="Open Grade 10" Style="{StaticResource PrimaryButton}" Command="{Binding OpenGrade10Command}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Grade 11 card -->
+                    <Border Style="{StaticResource Card}" Margin="10,0,0,0">
+                        <StackPanel>
+                            <Grid>
+                                <Border Width="38" Height="38" Background="#DCFCE7" CornerRadius="8" HorizontalAlignment="Left">
+                                    <TextBlock Text="&#128207;" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <Border Background="#DCFCE7" CornerRadius="10" Padding="8,3" HorizontalAlignment="Right" VerticalAlignment="Top">
+                                    <TextBlock Text="{Binding Grade11Count, StringFormat='{}{0} Enrolled'}" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource SuccessGreen}"/>
+                                </Border>
+                            </Grid>
+                            <TextBlock Text="Grade 11 Mathematics" FontWeight="Bold" FontSize="15" Margin="0,14,0,4"/>
+                            <TextBlock Text="Deep dive into advanced topics, track attendance trends, coordinate mock exam cycles and fee settlements."
+                                       TextWrapping="Wrap" FontSize="11.5" Foreground="{StaticResource TextMuted}" Margin="0,0,0,16"/>
+                            <Button Content="Open Grade 11" Style="{StaticResource SuccessButton}" Command="{Binding OpenGrade11Command}"/>
+                        </StackPanel>
+                    </Border>
+                </UniformGrid>
+            </StackPanel>
+        </Grid>
+    </DockPanel>
+</Window>
