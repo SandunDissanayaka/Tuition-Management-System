@@ -32,7 +32,7 @@
                 </StackPanel>
                 <StackPanel Grid.Column="2">
                     <TextBlock Text="DATE" Style="{StaticResource FieldLabel}"/>
-                    <DatePicker SelectedDate="{Binding SessionDate}" Height="38"/>
+                    <DatePicker SelectedDate="{Binding SessionDate}" Height="60"/>
                 </StackPanel>
                 <StackPanel Grid.Column="4">
                     <TextBlock Text="LESSON NAME" Style="{StaticResource FieldLabel}"/>
