@@ -1,6 +1,7 @@
 <Window x:Class="TuitionManagementSystem.Views.LoginWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctrl="clr-namespace:TuitionManagementSystem.Views"
         Title="Jayagath Institute - Login" Height="640" Width="900"
         WindowStartupLocation="CenterScreen"
         TextOptions.TextFormattingMode="Display"
@@ -36,7 +37,7 @@
                              Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,16"/>
 
                     <TextBlock Text="Password" Style="{StaticResource FieldLabel}"/>
-                    <PasswordBox x:Name="PasswordBox" Style="{StaticResource InputPasswordBox}" Margin="0,0,0,6"/>
+                    <ctrl:PasswordInputBox x:Name="PasswordBox" Margin="0,0,0,6"/>
 
                     <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource DangerRed}"
                                FontSize="12.5" TextWrapping="Wrap" Margin="0,0,0,10"/>
