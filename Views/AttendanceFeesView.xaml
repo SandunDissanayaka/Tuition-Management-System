@@ -3,6 +3,29 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:local="clr-namespace:TuitionManagementSystem.Helpers">
+    <UserControl.Resources>
+        <!-- Page-number button (1 2 3 ...). The current page is drawn solid blue. -->
+        <Style x:Key="PageNumberButton" TargetType="Button" BasedOn="{StaticResource OutlineButton}">
+            <Setter Property="MinWidth" Value="36"/>
+            <Setter Property="Margin" Value="0,0,4,0"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsCurrent}" Value="True">
+                    <Setter Property="Background" Value="{StaticResource PrimaryBlue}"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Previous / Next button: greyed out when there is no previous / next page. -->
+        <Style x:Key="PagerNavButton" TargetType="Button" BasedOn="{StaticResource OutlineButton}">
+            <Setter Property="MinWidth" Value="90"/>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.45"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
     <StackPanel>
         <Grid>
             <StackPanel>
@@ -32,7 +55,7 @@
                 </StackPanel>
                 <StackPanel Grid.Column="2">
                     <TextBlock Text="DATE" Style="{StaticResource FieldLabel}"/>
-                    <DatePicker SelectedDate="{Binding SessionDate}" Height="60"/>
+                    <DatePicker SelectedDate="{Binding SessionDate}" DisplayDateEnd="{x:Static sys:DateTime.Today}" Height="60"/>
                 </StackPanel>
                 <StackPanel Grid.Column="4">
                     <TextBlock Text="LESSON NAME" Style="{StaticResource FieldLabel}"/>
@@ -48,6 +71,23 @@
         <TextBlock Text="Student Attendance" FontWeight="Bold" FontSize="14"/>
         <TextBlock Text="Select attendance and fee status for each student. Nothing is pre-selected — pick 'Present' or 'Absent' for each student, then Save."
                    Style="{StaticResource PageSubtitle}" TextWrapping="Wrap" Margin="0,0,0,12"/>
+
+        <!-- Search by student ID or name -->
+        <Border Style="{StaticResource Card}" Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="12"/>
+                    <ColumnDefinition Width="90"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="SEARCH STUDENT (ID OR NAME)" Style="{StaticResource FieldLabel}"/>
+                    <TextBox Style="{StaticResource InputBox}" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+                <Button Grid.Column="2" Content="Clear" Style="{StaticResource OutlineButton}" Height="42"
+                        VerticalAlignment="Bottom" Command="{Binding ClearSearchCommand}"/>
+            </Grid>
+        </Border>
 
         <Border Style="{StaticResource Card}" Padding="0">
             <StackPanel>
@@ -119,6 +159,51 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
+
+                <!-- Shown when the search finds nobody -->
+                <TextBlock Text="{Binding NoResultsText}" Style="{StaticResource PageSubtitle}" HorizontalAlignment="Center"
+                           Margin="0,24" Visibility="{Binding HasNoResults, Converter={x:Static local:BoolToVisConverter.Instance}}"/>
+
+                <!-- Pager: summary on the left, Previous | 1 2 3 ... | Next on the right -->
+                <Grid Margin="16,12" Background="Transparent">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Text="{Binding PageInfoText}" Style="{StaticResource PageSubtitle}"
+                               VerticalAlignment="Center"/>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal"
+                                Visibility="{Binding ShowPager, Converter={x:Static local:BoolToVisConverter.Instance}}">
+                        <Button Content="&#8249;  Previous" Style="{StaticResource PagerNavButton}" Margin="0,0,8,0"
+                                Command="{Binding PreviousPageCommand}"/>
+
+                        <ItemsControl ItemsSource="{Binding PageNumbers}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Button Content="{Binding Label}" Style="{StaticResource PageNumberButton}"
+                                                Command="{Binding DataContext.GoToPageCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                Visibility="{Binding IsEllipsis, Converter={x:Static local:InverseBoolToVisConverter.Instance}}"/>
+                                        <TextBlock Text="..." VerticalAlignment="Center" Margin="4,0,8,0"
+                                                   Foreground="{StaticResource TextMuted}"
+                                                   Visibility="{Binding IsEllipsis, Converter={x:Static local:BoolToVisConverter.Instance}}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <Button Content="Next  &#8250;" Style="{StaticResource PagerNavButton}" Margin="4,0,0,0"
+                                Command="{Binding NextPageCommand}"/>
+                    </StackPanel>
+                </Grid>
             </StackPanel>
         </Border>
     </StackPanel>
