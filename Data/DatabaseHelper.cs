@@ -440,6 +440,35 @@ namespace TuitionManagementSystem.Data
             return list;
         }
 
+        /// <summary>Attendance history for the Reports screen: every session in the date range
+        /// where a student of this grade was marked PRESENT or ABSENT ("Not Marked" is skipped,
+        /// because nothing was decided for it). The search text matches part of the student's
+        /// name or student ID. Newest session first.</summary>
+        public static List<AttendanceRecord> GetAttendanceHistory(string grade, string searchStudent, DateTime? from, DateTime? to)
+        {
+            var list = new List<AttendanceRecord>();
+            using var conn = GetConnection();
+            var cmd = conn.CreateCommand();
+            cmd.CommandText = @"
+                SELECT ar.*, s.StudentCode, s.Name AS StudentName, sess.SessionDate, sess.LessonName, sess.Grade
+                FROM AttendanceRecords ar
+                JOIN Students s ON s.Id = ar.StudentId
+                JOIN Sessions sess ON sess.Id = ar.SessionId
+                WHERE sess.Grade = $g
+                  AND ar.Attendance IN ('Present','Absent')
+                  AND ($from IS NULL OR sess.SessionDate >= $from)
+                  AND ($to IS NULL OR sess.SessionDate <= $to)
+                  AND ($q IS NULL OR s.Name LIKE $q OR s.StudentCode LIKE $q)
+                ORDER BY sess.SessionDate DESC, s.Name";
+            cmd.Parameters.AddWithValue("$g", grade);
+            cmd.Parameters.AddWithValue("$from", (object)from?.ToString("yyyy-MM-dd") ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("$to", (object)to?.ToString("yyyy-MM-dd") ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("$q", string.IsNullOrWhiteSpace(searchStudent) ? (object)DBNull.Value : $"%{searchStudent.Trim()}%");
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read()) list.Add(ReadAttendance(reader, withSessionInfo: true));
+            return list;
+        }
+
         public static void MarkFeeCollected(int attendanceRecordId, decimal amount)
         {
             using var conn = GetConnection();
