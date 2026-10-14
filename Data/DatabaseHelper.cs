@@ -51,6 +51,7 @@ namespace TuitionManagementSystem.Data
                     Name TEXT NOT NULL,
                     Grade TEXT NOT NULL,
                     School TEXT,
+                    ParentRelationship TEXT DEFAULT '',
                     ParentGuardian TEXT,
                     Contact TEXT
                 );
@@ -79,7 +80,35 @@ namespace TuitionManagementSystem.Data
                 );";
             cmd.ExecuteNonQuery();
 
+            // Databases created before the Father/Mother/Guardian feature don't have this column yet.
+            // Add it once, keeping every existing student record untouched.
+            EnsureColumn(conn, "Students", "ParentRelationship", "TEXT DEFAULT ''");
+
             SeedDefaultAdmin();
+        }
+
+        /// <summary>Adds a column to an existing table only if it is not there yet (simple migration).</summary>
+        private static void EnsureColumn(SqliteConnection conn, string table, string column, string definition)
+        {
+            bool exists = false;
+            var check = conn.CreateCommand();
+            check.CommandText = $"PRAGMA table_info({table})";
+            using (var reader = check.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    if (string.Equals(reader.GetString(reader.GetOrdinal("name")), column, StringComparison.OrdinalIgnoreCase))
+                    {
+                        exists = true;
+                        break;
+                    }
+                }
+            }
+            if (exists) return;
+
+            var alter = conn.CreateCommand();
+            alter.CommandText = $"ALTER TABLE {table} ADD COLUMN {column} {definition}";
+            alter.ExecuteNonQuery();
         }
 
         private static void SeedDefaultAdmin()
@@ -235,12 +264,13 @@ namespace TuitionManagementSystem.Data
         {
             using var conn = GetConnection();
             var cmd = conn.CreateCommand();
-            cmd.CommandText = @"INSERT INTO Students (StudentCode, Name, Grade, School, ParentGuardian, Contact)
-                                 VALUES ($c, $n, $g, $s, $p, $ct)";
+            cmd.CommandText = @"INSERT INTO Students (StudentCode, Name, Grade, School, ParentRelationship, ParentGuardian, Contact)
+                                 VALUES ($c, $n, $g, $s, $pr, $p, $ct)";
             cmd.Parameters.AddWithValue("$c", s.StudentCode);
             cmd.Parameters.AddWithValue("$n", s.Name);
             cmd.Parameters.AddWithValue("$g", s.Grade);
             cmd.Parameters.AddWithValue("$s", s.School ?? "");
+            cmd.Parameters.AddWithValue("$pr", s.ParentRelationship ?? "");
             cmd.Parameters.AddWithValue("$p", s.ParentGuardian ?? "");
             cmd.Parameters.AddWithValue("$ct", s.Contact ?? "");
             cmd.ExecuteNonQuery();
@@ -250,9 +280,10 @@ namespace TuitionManagementSystem.Data
         {
             using var conn = GetConnection();
             var cmd = conn.CreateCommand();
-            cmd.CommandText = @"UPDATE Students SET Name=$n, School=$s, ParentGuardian=$p, Contact=$ct WHERE Id=$id";
+            cmd.CommandText = @"UPDATE Students SET Name=$n, School=$s, ParentRelationship=$pr, ParentGuardian=$p, Contact=$ct WHERE Id=$id";
             cmd.Parameters.AddWithValue("$n", s.Name);
             cmd.Parameters.AddWithValue("$s", s.School ?? "");
+            cmd.Parameters.AddWithValue("$pr", s.ParentRelationship ?? "");
             cmd.Parameters.AddWithValue("$p", s.ParentGuardian ?? "");
             cmd.Parameters.AddWithValue("$ct", s.Contact ?? "");
             cmd.Parameters.AddWithValue("$id", s.Id);
@@ -284,6 +315,7 @@ namespace TuitionManagementSystem.Data
             Name = r.GetString(r.GetOrdinal("Name")),
             Grade = r.GetString(r.GetOrdinal("Grade")),
             School = r.IsDBNull(r.GetOrdinal("School")) ? "" : r.GetString(r.GetOrdinal("School")),
+            ParentRelationship = r.IsDBNull(r.GetOrdinal("ParentRelationship")) ? "" : r.GetString(r.GetOrdinal("ParentRelationship")),
             ParentGuardian = r.IsDBNull(r.GetOrdinal("ParentGuardian")) ? "" : r.GetString(r.GetOrdinal("ParentGuardian")),
             Contact = r.IsDBNull(r.GetOrdinal("Contact")) ? "" : r.GetString(r.GetOrdinal("Contact"))
         };

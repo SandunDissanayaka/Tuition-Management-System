@@ -8,7 +8,8 @@ namespace TuitionManagementSystem.Models
         public string Name { get; set; }
         public string Grade { get; set; }          // "Grade 10" or "Grade 11"
         public string School { get; set; }
-        public string ParentGuardian { get; set; }
+        public string ParentRelationship { get; set; }   // "Father", "Mother" or "Guardian"
+        public string ParentGuardian { get; set; }       // that person's name
         public string Contact { get; set; }
     }
 }
