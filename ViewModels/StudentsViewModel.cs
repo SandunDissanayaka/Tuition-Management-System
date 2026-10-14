@@ -38,10 +38,16 @@ namespace TuitionManagementSystem.ViewModels
             set => SetField(ref _formTitle, value);
         }
 
+        /// <summary>The choices shown in the Parent / Guardian drop-down.</summary>
+        public string[] ParentRelationships { get; } = new[] { "Father", "Mother", "Guardian" };
+
         private int _editingId;
-        private string _name, _school, _parentGuardian, _contact;
+        private string _name, _school, _parentRelationship, _parentGuardian, _contact;
         public string Name { get => _name; set => SetField(ref _name, value); }
         public string School { get => _school; set => SetField(ref _school, value); }
+        /// <summary>"Father", "Mother" or "Guardian" (null until one is picked).</summary>
+        public string ParentRelationship { get => _parentRelationship; set => SetField(ref _parentRelationship, value); }
+        /// <summary>The name of that parent / guardian.</summary>
         public string ParentGuardian { get => _parentGuardian; set => SetField(ref _parentGuardian, value); }
         public string Contact { get => _contact; set => SetField(ref _contact, value); }
 
@@ -93,6 +99,7 @@ namespace TuitionManagementSystem.ViewModels
             _editingId = 0;
             FormTitle = "Add New Student";
             Name = School = ParentGuardian = Contact = "";
+            ParentRelationship = null;
             IsFormVisible = true;
         }
 
@@ -109,6 +116,8 @@ namespace TuitionManagementSystem.ViewModels
             FormTitle = "Edit Student";
             Name = s.Name;
             School = s.School;
+            // Students saved before this feature have no relationship yet - the box stays empty until one is chosen.
+            ParentRelationship = string.IsNullOrWhiteSpace(s.ParentRelationship) ? null : s.ParentRelationship;
             ParentGuardian = s.ParentGuardian;
             Contact = s.Contact;
             IsFormVisible = true;
@@ -130,6 +139,27 @@ namespace TuitionManagementSystem.ViewModels
                 return;
             }
 
+            // Parent / Guardian: the drop-down and the name go together.
+            bool hasParentName = !string.IsNullOrWhiteSpace(ParentGuardian);
+            bool hasRelationship = !string.IsNullOrWhiteSpace(ParentRelationship);
+
+            if (hasParentName && !hasRelationship)
+            {
+                MessageBox.Show("Please select whether the parent / guardian is the Father, Mother or Guardian.",
+                    "Missing information", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (!hasParentName && hasRelationship)
+            {
+                MessageBox.Show($"Please enter the {ParentRelationship.ToLower()}'s name.",
+                    "Missing information", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            string relationshipToSave = hasParentName ? ParentRelationship : "";
+            string parentNameToSave = hasParentName ? ParentGuardian.Trim() : "";
+
             if (_editingId == 0)
             {
                 var student = new Student
@@ -138,7 +168,8 @@ namespace TuitionManagementSystem.ViewModels
                     Name = Name.Trim(),
                     Grade = Grade,
                     School = School,
-                    ParentGuardian = ParentGuardian,
+                    ParentRelationship = relationshipToSave,
+                    ParentGuardian = parentNameToSave,
                     Contact = Contact
                 };
                 DatabaseHelper.AddStudent(student);
@@ -150,7 +181,8 @@ namespace TuitionManagementSystem.ViewModels
                     Id = _editingId,
                     Name = Name.Trim(),
                     School = School,
-                    ParentGuardian = ParentGuardian,
+                    ParentRelationship = relationshipToSave,
+                    ParentGuardian = parentNameToSave,
                     Contact = Contact
                 });
             }
