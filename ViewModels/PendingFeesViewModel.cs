@@ -13,10 +13,29 @@ namespace TuitionManagementSystem.ViewModels
         public string Grade => AppSession.CurrentGrade;
 
         private DateTime? _fromDate;
-        public DateTime? FromDate { get => _fromDate; set { SetField(ref _fromDate, value); Load(); } }
+        public DateTime? FromDate
+        {
+            get => _fromDate;
+            set
+            {
+                // No future dates: anything after today becomes today.
+                if (value.HasValue && value.Value.Date > DateTime.Today) { value = DateTime.Today; OnPropertyChanged(); }
+                SetField(ref _fromDate, value);
+                Load();
+            }
+        }
 
         private DateTime? _toDate;
-        public DateTime? ToDate { get => _toDate; set { SetField(ref _toDate, value); Load(); } }
+        public DateTime? ToDate
+        {
+            get => _toDate;
+            set
+            {
+                if (value.HasValue && value.Value.Date > DateTime.Today) { value = DateTime.Today; OnPropertyChanged(); }
+                SetField(ref _toDate, value);
+                Load();
+            }
+        }
 
         private string _searchText;
         public string SearchText { get => _searchText; set { SetField(ref _searchText, value); Load(); } }

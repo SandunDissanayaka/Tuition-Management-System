@@ -1,6 +1,7 @@
 <UserControl x:Class="TuitionManagementSystem.Views.DailySummaryView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib">
     <StackPanel>
         <Grid>
             <StackPanel>
@@ -23,7 +24,7 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0">
                     <TextBlock Text="DATE" Style="{StaticResource FieldLabel}"/>
-                    <DatePicker SelectedDate="{Binding Date}" Height="38"/>
+                    <DatePicker SelectedDate="{Binding Date}" DisplayDateEnd="{x:Static sys:DateTime.Today}" Height="38"/>
                 </StackPanel>
                 <StackPanel Grid.Column="2">
                     <TextBlock Text="GRADE" Style="{StaticResource FieldLabel}"/>

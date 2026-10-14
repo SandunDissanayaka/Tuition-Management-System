@@ -1,6 +1,7 @@
 <UserControl x:Class="TuitionManagementSystem.Views.PendingFeesView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib">
     <StackPanel>
         <TextBlock Text="PENDING FEES" Style="{StaticResource SectionLabel}"/>
         <TextBlock Text="Pending Fee Students" Style="{StaticResource PageTitle}"/>
@@ -25,11 +26,11 @@
                 </StackPanel>
                 <StackPanel Grid.Column="2">
                     <TextBlock Text="FROM DATE" Style="{StaticResource FieldLabel}"/>
-                    <DatePicker SelectedDate="{Binding FromDate}" Height="38"/>
+                    <DatePicker SelectedDate="{Binding FromDate}" DisplayDateEnd="{x:Static sys:DateTime.Today}" Height="38"/>
                 </StackPanel>
                 <StackPanel Grid.Column="4">
                     <TextBlock Text="TO DATE" Style="{StaticResource FieldLabel}"/>
-                    <DatePicker SelectedDate="{Binding ToDate}" Height="38"/>
+                    <DatePicker SelectedDate="{Binding ToDate}" DisplayDateEnd="{x:Static sys:DateTime.Today}" Height="38"/>
                 </StackPanel>
                 <StackPanel Grid.Column="6">
                     <TextBlock Text="SEARCH STUDENT" Style="{StaticResource FieldLabel}"/>

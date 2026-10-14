@@ -14,7 +14,13 @@ namespace TuitionManagementSystem.ViewModels
         public DateTime Date
         {
             get => _date;
-            set { SetField(ref _date, value); Load(); }
+            set
+            {
+                // No future dates: anything after today becomes today (Load() refreshes the picker).
+                if (value.Date > DateTime.Today) value = DateTime.Today;
+                SetField(ref _date, value);
+                Load();
+            }
         }
 
         public string LessonName { get; private set; }
